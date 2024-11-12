@@ -41,7 +41,7 @@ def calculate_distance(array): # avstand mellom max og min verdi i meter
 
 
 
-def plot_coordinates(vec1, vec2):
+def plot_coordinates(vec1, vec2): # nåværende er tilpasset til sammenligning av altitude data
     x1 = np.linspace(1, len(vec1) + 1, len(vec1))
     x2 = np.linspace(1, len(vec2) + 1, len(vec2))
     plt.scatter(x2, vec2, c='blue', marker='o', label='Coordinates - iPhone')
@@ -118,4 +118,5 @@ print(f'alt intervall = [{min(alt_array_iph): .2f}, {max(alt_array_iph): .2f}] ;
 print(f'S = {np.sqrt(alt_var_iph): .2f}m')
 print(f'SE(x) :) = {(np.sqrt(alt_var_iph)) / (np.sqrt(len(alt_array_iph))): .2f}m')
 
+### Plotter data ###
 plot_coordinates(alt_array_ard, alt_array_iph)
