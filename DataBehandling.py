@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import os
 import math
 import numpy as np
-print("Current Working Directory:", os.getcwd()) # en pwd for pythonen. brukes til å finne path til csv
+#print("Current Working Directory:", os.getcwd()) # en pwd for pythonen. brukes til å finne path til csv
 
 def extract_column_to_array(file_path, column_name):
     data_array = []
@@ -71,14 +71,14 @@ def var(array): # varians
     return sum/(n-1)
 
 
-### File path til csv'en ; må endres for ny fil eller pc ###
+### File path til csv'en ###
 arduino_path = './skolen/skolen_god_antenne.csv'
 iphone_path = './skolen/RawData.csv'
 
 
 ### Navn på kolonne som skal indexes ###
-lon_column = 'Longitude'
-lat_column = 'Latitude'
+#lon_column = 'Longitude'
+#lat_column = 'Latitude'
 alt_column = 'Altitude'
 
 ### Henter ut dataene som skal brukes i oppgaven ###
