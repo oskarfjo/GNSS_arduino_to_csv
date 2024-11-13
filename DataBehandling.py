@@ -52,34 +52,43 @@ def var(array): # varians
 
     return sum/(n-1)
 
-def autokor(alt_array, max_lag, enhet):
+def autokor(alt_array, enhet, interval=10, range_size=10):
     if enhet == 'iphone':
         sampling_interval = 0.5
         segment = alt_array[40:-40]
-        max_lag *= 2
     elif enhet == 'arduino':
         sampling_interval = 1
         segment = alt_array[20:-20]
     else:
-        return
-
+        return {}, {}
     
     n = len(segment)
     median = np.mean(segment)
     
-    autokorrelasjon = {}
-    
-    for lag in range(1, max_lag + 1):
-        time_lag = lag * sampling_interval
+    fixed_interval_autocorrelation = {}
+    max_time = int((n - 1) * sampling_interval)
+    for time_lag in range(interval, max_time + 1, interval):
+        lag = int(time_lag / sampling_interval)
+        if lag >= n:
+            break
         teller = np.sum((segment[:-lag] - median) * (segment[lag:] - median))
         nevner = np.sum((segment - median) ** 2)
-        
-        if nevner == 0:
-            autokorrelasjon[time_lag] = 0
-        else:
-            autokorrelasjon[time_lag] = teller / nevner
+        fixed_interval_autocorrelation[time_lag] = teller / nevner if nevner != 0 else 0
     
-    return autokorrelasjon
+    averaged_range_autocorrelation = {}
+    for start_time in range(1, max_time - range_size + 2, interval):
+        start_lag = int(start_time / sampling_interval)
+        end_lag = int((start_time + range_size - 1) / sampling_interval)
+        if end_lag >= n:
+            break
+        range_autocorrelation = []
+        for lag in range(start_lag, end_lag + 1):
+            teller = np.sum((segment[:-lag] - median) * (segment[lag:] - median))
+            nevner = np.sum((segment - median) ** 2)
+            range_autocorrelation.append(teller / nevner if nevner != 0 else 0)
+        averaged_range_autocorrelation[f"{start_time}-{start_time + range_size - 1}s"] = np.mean(range_autocorrelation)
+
+    return fixed_interval_autocorrelation, averaged_range_autocorrelation
     
 def calculate_distance(array): # avstand mellom max og min verdi i meter
 
@@ -127,8 +136,8 @@ alt_var_iph: float = var(alt_array_iph)
 alt_range_ard = calculate_distance(alt_array_ard)
 alt_range_iph = calculate_distance(alt_array_iph)
 
-alt_autokor_ard = autokor(alt_array_ard, 10, 'arduino')
-alt_autokor_iph = autokor(alt_array_iph, 10, 'iphone')
+alt_autokor_ard, alt_autokor_av_ard = autokor(alt_array_ard, 'arduino')
+alt_autokor_iph, alt_autokor_av_iph = autokor(alt_array_iph, 'iphone')
 
 ### Printer data i konsoll ###
 print('**** Arduino ****')
@@ -138,7 +147,7 @@ print(f'varians = alt: {alt_var_ard: .2f}m^2')
 print(f'alt intervall = [{min(alt_array_ard): .2f}, {max(alt_array_ard): .2f}] ; {alt_range_ard: .2f}m')
 print(f'S = {np.sqrt(alt_var_ard): .2f}m')
 print(f'SE(x) :) = {(np.sqrt(alt_var_ard)) / (np.sqrt(len(alt_array_ard))): .2f}m')
-print(f'Autokorrelasjon: {alt_autokor_ard}')
+print(f'Autokorrelasjon: {alt_autokor_av_ard}')
 print(' ')
 print('**** iPhone ****')
 print(f'n = {len(alt_array_iph)}')
@@ -147,7 +156,7 @@ print(f'varians = alt: {alt_var_iph: .2f}m^2')
 print(f'alt intervall = [{min(alt_array_iph): .2f}, {max(alt_array_iph): .2f}] ; {alt_range_iph: .2f}m')
 print(f'S = {np.sqrt(alt_var_iph): .2f}m')
 print(f'SE(x) :) = {(np.sqrt(alt_var_iph)) / (np.sqrt(len(alt_array_iph))): .2f}m')
-print(f'Autokorrelasjon: {alt_autokor_iph}')
+print(f'Autokorrelasjon: {alt_autokor_av_iph}')
 
 ### Plotter data ###
 plot_coordinates(alt_array_ard, alt_array_iph)
