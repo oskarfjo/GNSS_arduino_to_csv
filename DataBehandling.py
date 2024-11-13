@@ -52,6 +52,27 @@ def var(array): # varians
 
     return sum/(n-1)
 
+def autokor(alt_array, max_lag):
+
+    segment = alt_array[20:-20]
+    n = len(segment)
+    median = np.mean(segment)
+    
+    autokorrelations = {}
+    
+    for lag in range(1, max_lag + 1):
+
+        teller = np.sum((segment[:-lag] - median) * (segment[lag:] - median))
+        
+        nevner = np.sum((segment - median) ** 2)
+        
+        if nevner == 0:
+            autokorrelations[lag] = 0
+        else:
+            autokorrelations[lag] = teller / nevner
+    
+    return autokorrelations
+    
 def calculate_distance(array): # avstand mellom max og min verdi i meter
 
     #latitude = av(lat_array)
@@ -98,6 +119,9 @@ alt_var_iph: float = var(alt_array_iph)
 alt_range_ard = calculate_distance(alt_array_ard)
 alt_range_iph = calculate_distance(alt_array_iph)
 
+alt_autokor_ard = autokor(alt_array_ard, 10)
+alt_autokor_iph = autokor(alt_array_iph, 10)
+
 ### Printer data i konsoll ###
 print('**** Arduino ****')
 print(f'n = {len(alt_array_ard)}')
@@ -106,6 +130,7 @@ print(f'varians = alt: {alt_var_ard: .2f}m^2')
 print(f'alt intervall = [{min(alt_array_ard): .2f}, {max(alt_array_ard): .2f}] ; {alt_range_ard: .2f}m')
 print(f'S = {np.sqrt(alt_var_ard): .2f}m')
 print(f'SE(x) :) = {(np.sqrt(alt_var_ard)) / (np.sqrt(len(alt_array_ard))): .2f}m')
+print(f'Autokorrelasjon: {alt_autokor_ard}')
 print(' ')
 print('**** iPhone ****')
 print(f'n = {len(alt_array_iph)}')
@@ -114,6 +139,7 @@ print(f'varians = alt: {alt_var_iph: .2f}m^2')
 print(f'alt intervall = [{min(alt_array_iph): .2f}, {max(alt_array_iph): .2f}] ; {alt_range_iph: .2f}m')
 print(f'S = {np.sqrt(alt_var_iph): .2f}m')
 print(f'SE(x) :) = {(np.sqrt(alt_var_iph)) / (np.sqrt(len(alt_array_iph))): .2f}m')
+print(f'Autokorrelasjon: {alt_autokor_iph}')
 
 ### Plotter data ###
 plot_coordinates(alt_array_ard, alt_array_iph)
