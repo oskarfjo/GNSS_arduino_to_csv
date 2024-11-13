@@ -52,26 +52,34 @@ def var(array): # varians
 
     return sum/(n-1)
 
-def autokor(alt_array, max_lag):
+def autokor(alt_array, max_lag, enhet):
+    if enhet == 'iphone':
+        sampling_interval = 0.5
+        segment = alt_array[40:-40]
+        max_lag *= 2
+    elif enhet == 'arduino':
+        sampling_interval = 1
+        segment = alt_array[20:-20]
+    else:
+        return
 
-    segment = alt_array[20:-20]
+    
     n = len(segment)
     median = np.mean(segment)
     
-    autokorrelations = {}
+    autokorrelasjon = {}
     
     for lag in range(1, max_lag + 1):
-
+        time_lag = lag * sampling_interval
         teller = np.sum((segment[:-lag] - median) * (segment[lag:] - median))
-        
         nevner = np.sum((segment - median) ** 2)
         
         if nevner == 0:
-            autokorrelations[lag] = 0
+            autokorrelasjon[time_lag] = 0
         else:
-            autokorrelations[lag] = teller / nevner
+            autokorrelasjon[time_lag] = teller / nevner
     
-    return autokorrelations
+    return autokorrelasjon
     
 def calculate_distance(array): # avstand mellom max og min verdi i meter
 
@@ -119,8 +127,8 @@ alt_var_iph: float = var(alt_array_iph)
 alt_range_ard = calculate_distance(alt_array_ard)
 alt_range_iph = calculate_distance(alt_array_iph)
 
-alt_autokor_ard = autokor(alt_array_ard, 10)
-alt_autokor_iph = autokor(alt_array_iph, 10)
+alt_autokor_ard = autokor(alt_array_ard, 10, 'arduino')
+alt_autokor_iph = autokor(alt_array_iph, 10, 'iphone')
 
 ### Printer data i konsoll ###
 print('**** Arduino ****')
