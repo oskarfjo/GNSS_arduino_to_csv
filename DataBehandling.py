@@ -23,24 +23,6 @@ def extract_column_to_array(file_path, column_name):
 
     return data_array
 
-def calculate_distance(array): # avstand mellom max og min verdi i meter
-
-    #latitude = 62.4746318618
-    #lat_to_m = 111320
-    
-    #lat_range = max(lat_array) - min(lat_array)
-    #lon_range = max(lon_array) - min(lon_array)
-    alt_range = max(array) - min(array)
-    
-    #lon_to_m = lat_to_m * math.cos(math.radians(latitude))
-
-    #lat_distance = lat_range * lat_to_m
-    #lon_distance = lon_range * lon_to_m
-    
-    return alt_range #lat_distance, lon_distance
-
-
-
 def plot_coordinates(vec1, vec2): # nåværende er tilpasset til sammenligning av altitude data
     x1 = np.linspace(1, len(vec1) + 1, len(vec1))
     x2 = np.linspace(1, len(vec2) + 1, len(vec2))
@@ -70,6 +52,21 @@ def var(array): # varians
 
     return sum/(n-1)
 
+def calculate_distance(array): # avstand mellom max og min verdi i meter
+
+    #latitude = av(lat_array)
+    #lat_to_m = 111320
+    
+    #lat_range = max(lat_array) - min(lat_array)
+    #lon_range = max(lon_array) - min(lon_array)
+    alt_range = max(array) - min(array)
+    
+    #lon_to_m = lat_to_m * math.cos(math.radians(latitude))
+
+    #lat_distance = lat_range * lat_to_m
+    #lon_distance = lon_range * lon_to_m
+    
+    return alt_range #lat_distance, lon_distance
 
 ### File path til csv'en ###
 arduino_path = './skolen/skolen_god_antenne.csv'
@@ -87,14 +84,14 @@ alt_column = 'Altitude'
 alt_array_ard: list[float] = extract_column_to_array(arduino_path, alt_column)
 alt_array_iph = extract_column_to_array(iphone_path, alt_column)
 ### Gjennomsnitt av dataene ###
-#lon_av: float = average(lon_array)
-#lat_av: float = average(lat_array)
+#lon_av: float = av(lon_array)
+#lat_av: float = av(lat_array)
 alt_av_ard: float = av(alt_array_ard)
 alt_av_iph: float = av(alt_array_iph)
 
 ### Varians av dataene ###
-#lon_var: float = e_varians(lon_array)
-#lat_var: float = e_varians(lat_array)
+#lon_var: float = var(lon_array)
+#lat_var: float = var(lat_array)
 alt_var_ard: float = var(alt_array_ard)
 alt_var_iph: float = var(alt_array_iph)
 
