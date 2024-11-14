@@ -133,9 +133,11 @@ alt_av_iph: float = av(alt_array_iph)
 alt_var_ard: float = var(alt_array_ard)
 alt_var_iph: float = var(alt_array_iph)
 
+### Range av målingene ###
 alt_range_ard = calculate_distance(alt_array_ard)
 alt_range_iph = calculate_distance(alt_array_iph)
 
+### Autokorrelasjon ###
 alt_autokor_ard, alt_autokor_av_ard = autokor(alt_array_ard, 'arduino')
 alt_autokor_iph, alt_autokor_av_iph = autokor(alt_array_iph, 'iphone')
 
