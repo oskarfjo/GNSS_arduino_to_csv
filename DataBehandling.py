@@ -52,13 +52,13 @@ def var(array): # varians
 
     return sum/(n-1)
 
-def autokor(alt_array, enhet, interval=10, range_size=10):
+def autokor(alt_array, enhet, interval=10, range_size=10): # autokorrelasjon med intervaller på 10 sekunder
     if enhet == 'iphone':
-        sampling_interval = 0.5
-        segment = alt_array[40:-40]
+        sampling_interval = 0.5 # iPhone måler 2 ganger per sekund
+        segment = alt_array[40:-40] # skipper 20 første sekundene
     elif enhet == 'arduino':
-        sampling_interval = 1
-        segment = alt_array[20:-20]
+        sampling_interval = 1 # arduino måler 1 gang per sekund
+        segment = alt_array[20:-20] # skipper 20 første sekundene
     else:
         return {}, {}
     
@@ -120,7 +120,7 @@ alt_column = 'Altitude'
 #lon_array: list[float] = extract_column_to_array(file_path, lon_column)
 #lat_array: list[float] = extract_column_to_array(file_path, lat_column)
 alt_array_ard: list[float] = extract_column_to_array(arduino_path, alt_column)
-alt_array_iph = extract_column_to_array(iphone_path, alt_column)
+alt_array_iph: list[float] = extract_column_to_array(iphone_path, alt_column)
 ### Gjennomsnitt av dataene ###
 #lon_av: float = av(lon_array)
 #lat_av: float = av(lat_array)
@@ -134,8 +134,8 @@ alt_var_ard: float = var(alt_array_ard)
 alt_var_iph: float = var(alt_array_iph)
 
 ### Range av målingene ###
-alt_range_ard = calculate_distance(alt_array_ard)
-alt_range_iph = calculate_distance(alt_array_iph)
+alt_range_ard: float = calculate_distance(alt_array_ard)
+alt_range_iph: float = calculate_distance(alt_array_iph)
 
 ### Autokorrelasjon ###
 alt_autokor_ard, alt_autokor_av_ard = autokor(alt_array_ard, 'arduino')
@@ -150,6 +150,7 @@ print(f'alt intervall = [{min(alt_array_ard): .2f}, {max(alt_array_ard): .2f}] ;
 print(f'S = {np.sqrt(alt_var_ard): .2f}m')
 print(f'SE(x) :) = {(np.sqrt(alt_var_ard)) / (np.sqrt(len(alt_array_ard))): .2f}m')
 print(f'Autokorrelasjon: {alt_autokor_ard}')
+#print(f'Autokorrelasjon intervall gjennomsnitt: {alt_autokor_av_ard}')
 print(' ')
 print('**** iPhone ****')
 print(f'n = {len(alt_array_iph)}')
@@ -159,6 +160,7 @@ print(f'alt intervall = [{min(alt_array_iph): .2f}, {max(alt_array_iph): .2f}] ;
 print(f'S = {np.sqrt(alt_var_iph): .2f}m')
 print(f'SE(x) :) = {(np.sqrt(alt_var_iph)) / (np.sqrt(len(alt_array_iph))): .2f}m')
 print(f'Autokorrelasjon: {alt_autokor_iph}')
+#print(f'Autokorrelasjon intervall gjennomsnitt: {alt_autokor_av_iph}')
 
 ### Plotter data ###
 plot_coordinates(alt_array_ard, alt_array_iph)
